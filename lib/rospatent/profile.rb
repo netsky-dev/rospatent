@@ -1,10 +1,9 @@
-require_relative 'rospatent_api.rb'
+require_relative "api_request_decorator.rb"
 
 module Rospatent
   class Profile
     def self.get_current_profile(api_key)
-      RospatentAPI.get_response("/profiles/current/", api_key)
+      ApiRequestDecorator.get_response("/profiles/current/", api_key)
     end
   end
- 
 end
