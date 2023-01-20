@@ -1,10 +1,8 @@
-require_relative 'rospatent_api.rb'
-require_relative 'profile.rb'
+require_relative "rospatent/api_request_decorator"
+require_relative "rospatent/profile"
+require_relative "rospatent/statements"
+require_relative "rospatent/statement_types"
 
 module Rospatent
   class Error < StandardError; end
-
-  def self.get_current_profile(api_key)
-    Rospatent::Profile.get_current_profile(api_key)
-  end
 end
