@@ -48,8 +48,14 @@ module Rospatent
       make_request(EXTERNAL_BASE, path, api_key, "Put", payload)
     end
 
-    def self.post_auth_response(payload)
-      make_request(AUTH_BASE, "/o/token/", nil, "Post", payload, :form)
+    def self.post_auth_response(code)
+      make_request(AUTH_BASE, "/o/token/", nil, "Post", {
+        grant_type: :authorization_code,
+        client_id: Rospatent.configuration.client_id,
+        client_secret: Rospatent.configuration.client_secret,
+        redirect_uri: Rospatent.configuration.redirect_uri,
+        code: code,
+      }, :form)
     end
   end
 end

@@ -25,13 +25,7 @@ module Rospatent
     end
 
     def self.authorize(code)
-      res = ApiRequestDecorator.post_auth_response(
-        grant_type: :authorization_code,
-        redirect_uri: Rospatent.configuration.redirect_uri,
-        code: code,
-        client_id: Rospatent.configuration.client_id,
-        client_secret: Rospatent.configuration.client_secret
-      )
+      res = ApiRequestDecorator.post_auth_response code
       Authorization.new(res["access_token"], res["refresh_token"])
     end
 
@@ -42,6 +36,10 @@ module Rospatent
       end
 
       result
+    end
+
+    def ==(o)
+      o.is_a?(self.class) && (o.refresh == @refresh && o.token == @token)
     end
   end
 end
