@@ -35,10 +35,6 @@ RSpec.describe Rospatent::Authorization do
         .to_return(status: 200, body: { access_token: mock_token, refresh_token: mock_refresh }.to_json)
     end
 
-    # it "calls ApiRequestDecorator.post_auth_response with the correct code" do
-    #   expect(Rospatent::ApiRequestDecorator).to receive(:post_auth_response).with(mock_code)
-    # end
-
     it "returns the expected response" do
       response = described_class.authorize mock_code
       expect(response).to eq(described_class.new(mock_token, mock_refresh))
