@@ -1,10 +1,6 @@
-require "net/http"
-require "json"
-require "uri"
+require_relative "api_request_decorator.rb"
 
 module Rospatent
-  ROSPATENT_BASE = "https://online.rospatent.gov.ru"
-
   class AuthSession
     attr_reader :client_id
     attr_reader :client_secret
@@ -28,10 +24,10 @@ module Rospatent
       response_type: :code,
       redirect_uri: redirect,
     )
-    "#{ROSPATENT_BASE}/o/authorize/?#{qs}"
+    "#{AUTH_BASE}/o/authorize/?#{qs}"
   end
 
-  class Api
+  class Authorization
     attr_reader :token
     attr_reader :refresh
 
@@ -46,23 +42,20 @@ module Rospatent
     end
 
     def self.authorize(data)
-      res = Net::HTTP.post_form(
-        URI("#{ROSPATENT_BASE}/o/token/"),
+      res = ApiRequestDecorator.post_auth_response(
         grant_type: data.grant_type,
         redirect_uri: data.redirect_uri,
         code: data.code,
         client_id: data.client_id,
-        client_secret: data.client_secret,
+        client_secret: data.client_secret
       )
-      js = JSON.parse res.body
-
-      Api.new(js["access_token"], js["refresh_token"])
+      Authorization.new(res["access_token"], res["refresh_token"])
     end
 
     def self.authorize!(data)
       result = self.authorize data
       if result.nil?
-        raise "Failed to authorize"
+        raise Error, "Failed to authorize"
       end
 
       result
