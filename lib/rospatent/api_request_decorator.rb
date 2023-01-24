@@ -4,7 +4,6 @@ require "json"
 module Rospatent
   EXTERNAL_BASE = "https://online.rospatent.gov.ru/external_api"
   AUTH_BASE = "https://online.rospatent.gov.ru"
-  #AUTH_BASE = "http://localhost:2280/"
 
   class ApiRequestDecorator
     def self.make_request(base, path, api_key, request_type, payload = nil, content_type = :json)
@@ -33,7 +32,6 @@ module Rospatent
       if response.is_a?(Net::HTTPSuccess)
         JSON.parse(response.body)
       else
-        puts response
         raise Error, JSON.parse(response.body)["error"]["message"]
       end
     end
