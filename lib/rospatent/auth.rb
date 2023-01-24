@@ -1,28 +1,11 @@
 require_relative "api_request_decorator.rb"
 
 module Rospatent
-  class AuthSession
-    attr_reader :client_id
-    attr_reader :client_secret
-    attr_reader :redirect_uri
-    attr_reader :grant_type
-    attr_accessor :code
-
-    def initialize(params)
-      @client_id = params.fetch :client_id
-      @client_secret = params.fetch :client_secret
-      @redirect_uri = params.fetch :redirect_uri
-      @grant_type = params.fetch :grant_type
-      @code = params.fetch :code
-    end
-  end
-
-  def self.auth_url_for(client_id, redirect)
+  def self.auth_url
     qs = URI.encode_www_form(
-      redirect: redirect,
-      client_id: client_id,
+      client_id: configuration.client_id,
       response_type: :code,
-      redirect_uri: redirect,
+      redirect_uri: configuration.redirect_uri,
     )
     "#{AUTH_BASE}/o/authorize/?#{qs}"
   end
@@ -41,13 +24,13 @@ module Rospatent
       @refresh = refresh
     end
 
-    def self.authorize(data)
+    def self.authorize(code)
       res = ApiRequestDecorator.post_auth_response(
-        grant_type: data.grant_type,
-        redirect_uri: data.redirect_uri,
-        code: data.code,
-        client_id: data.client_id,
-        client_secret: data.client_secret
+        grant_type: :authorization_code,
+        redirect_uri: Rospatent.configuration.redirect_uri,
+        code: code,
+        client_id: Rospatent.configuration.client_id,
+        client_secret: Rospatent.configuration.client_secret
       )
       Authorization.new(res["access_token"], res["refresh_token"])
     end
